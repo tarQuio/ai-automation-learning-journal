@@ -1,0 +1,102 @@
+{
+  "name": "Automated Email-to-Telegram Notification Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        -20
+      ],
+      "id": "7a7fe59c-b313-401f-a344-470055ff3160",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Ow4ftYoUC1IMeG7j",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "=5122327413",
+        "text": "=📩 *EMAIL BARU*\n👤 *Dari:* {{ $json.pengirim }}\n📌 *Subjek:* {{ $json.subjek }}\n💬 *Isi:* {{ $json.isi }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        40,
+        -20
+      ],
+      "id": "ef8a7e8f-7c70-4573-9006-27b9585e76f9",
+      "name": "Send a text message",
+      "webhookId": "ab61b406-a3f9-41af-9f4c-719148f739fc",
+      "credentials": {
+        "telegramApi": {
+          "id": "ftVHBhmKKDyij2ZW",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  // 1. Ambil data langsung dari properti teratas JSON Gmail Anda\n  const rawSender = item.json.From || 'Unknown Sender';\n  const rawSubject = item.json.Subject || 'No Subject';\n  const rawSnippet = item.json.snippet || '';\n\n  // 2. Rapikan isi snippet agar tidak terlalu panjang (maksimal 150 karakter)\n  const cleanSnippet = rawSnippet.length > 150 \n    ? rawSnippet.substring(0, 150) + '...' \n    : rawSnippet;\n\n  // 3. Kembalikan variabel yang sudah bersih dan siap dipakai\n  return {\n    json: {\n      pengirim: rawSender,\n      subjek: rawSubject,\n      isi: cleanSnippet || 'Tidak ada pratinjau pesan.'\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -180,
+        -20
+      ],
+      "id": "dda13a75-2328-4b47-bd19-41265b965cc5",
+      "name": "Code"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2f211881-5144-4d5e-a342-6258c81d58d6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b99558b94db1a70f0b79b1ecdbb17881564e0c802dcf8d9ec1ca755852c67857"
+  },
+  "id": "dBJyj1pT2AUi0uS4",
+  "tags": []
+}
