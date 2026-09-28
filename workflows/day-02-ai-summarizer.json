@@ -1,0 +1,135 @@
+{
+  "name": "Day 2: AI Email Summarizer & Sentiment Classifier Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -260,
+        -20
+      ],
+      "id": "4f446ca7-9304-40d7-ba05-ff47ccff54d7",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Ow4ftYoUC1IMeG7j",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "=5122327413",
+        "text": "=🤖 EMAIL ANALYZER (AI)\n\n👤 Dari: {{ $('Gmail Trigger').item.json.From }}\n📌 Subjek: {{ $('Gmail Trigger').item.json.Subject }}\n\n💡 Ringkasan & Urgensi AI:\n{{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        320,
+        -20
+      ],
+      "id": "32d025b2-ff8e-40a1-b826-fea5c9c5a185",
+      "name": "Send a text message",
+      "webhookId": "b90afd7e-e215-4284-8263-5a1c74d7ef96",
+      "credentials": {
+        "telegramApi": {
+          "id": "ftVHBhmKKDyij2ZW",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        180
+      ],
+      "id": "00e0b106-2387-45be-9d37-8c4f44bb55a1",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "nIow40Mk4SExUWlx",
+          "name": "Groq account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analisis email masuk berikut:\n\nDari: {{ $json.From }}\nSubjek: {{ $json.Subject }}\nIsi Email: {{ $json.snippet }}\n\nTugas:\n1. Berikan analisis tingkat urgensi (pilihan: LOW, NORMAL, URGENT).\n2. Tuliskan ringkasan isi email maksimal 2 kalimat.\n\nTuliskan output secara langsung dan rapi.",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -40,
+        -20
+      ],
+      "id": "1750fb41-3d22-4133-a997-22ce721d16ae",
+      "name": "Basic LLM Chain"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "46d2bc61-396b-4d29-bd92-63bbe24a58fc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b99558b94db1a70f0b79b1ecdbb17881564e0c802dcf8d9ec1ca755852c67857"
+  },
+  "id": "oN8e5GXKm9XCB0Zf",
+  "tags": []
+}

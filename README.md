@@ -27,3 +27,26 @@ Automate tracking of incoming emails by extracting essential metadata (Sender, S
 ![Workflow Screenshot](./screenshots/day-01-workflow.png)
 
 ---
+
+## 📅 Day 2: AI Email Summarizer & Urgency Classifier
+
+### 🎯 Objective
+
+Streamline email processing by connecting a Gmail trigger directly to an LLM via Basic LLM Chain to generate concise 2-sentence summaries and analyze urgency levels before sending alerts to Telegram.
+
+### 🛠️ Tech Stack & Nodes Used
+
+- **n8n Self-Hosted** (Gmail Trigger, Basic LLM Chain, Telegram Node)
+- **Groq Chat Model** (LLM Integration)
+- **Telegram Bot API**
+
+### 💡 Key Learnings Today
+
+1. Implemented a streamlined 3-node architecture for efficient single-prompt AI processing.
+2. Formatted prompt templates to output structured text without over-engineering with complex Agent nodes.
+3. Successfully dynamically mapped AI outputs and email metadata into Telegram notification templates.
+
+### 📷 Workflow & Result
+
+![Workflow Diagram](./screenshots/day-02-workflow.png)
+![Telegram Output](./screenshots/day-02-result.png)
