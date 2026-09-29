@@ -50,3 +50,32 @@ Streamline email processing by connecting a Gmail trigger directly to an LLM via
 
 ![Workflow Diagram](./screenshots/day-02-workflow.png)
 ![Telegram Output](./screenshots/day-02-result.png)
+
+---
+
+## 📅 Day 3: Webhook Lead Ingestion, AI Sentiment/Action Processing & Database Logging
+
+### 🎯 Objective
+
+Build a real-time data ingestion pipeline using Webhooks to parse inbound lead payloads, process text with LLM for sentiment classification and actionable next steps, dynamically log structured records into Google Sheets, and dispatch notifications via Telegram.
+
+### 🛠️ Tech Stack & Nodes Used
+
+- **n8n Self-Hosted** (Webhook Trigger, Basic LLM Chain, Google Sheets Node, Telegram Node)
+- **Groq Chat Model** (LLM Integration)
+- **Google Sheets API** (OAuth2 / Service Account)
+- **Telegram Bot API**
+- **cURL / Postman** (Testing Trigger)
+
+### 💡 Key Learnings Today
+
+1. Configured Webhook Triggers to handle incoming JSON POST payloads.
+2. Formatted prompt instructions to return pure JSON output containing multi-field metadata (`sentimen` & `tindakan`).
+3. Parsed stringified JSON responses using expression mode `JSON.parse()` for seamless mapping into database rows and chat alert templates.
+4. Integrated automated row appending to maintain a structured lead database on Google Sheets.
+
+### 📷 Workflow & Output
+
+![Workflow Canvas](./screenshots/day-03-workflow.png)
+![Google Sheets Entry](./screenshots/day-03-sheets.png)
+![Telegram Alert](./screenshots/day-03-telegram.png)

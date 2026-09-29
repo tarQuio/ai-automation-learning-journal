@@ -1,0 +1,241 @@
+{
+  "name": "My workflow 6",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "dd7c7052-6997-405a-ae11-814de47dbb18",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -200,
+        0
+      ],
+      "id": "d5c422bd-42fc-4920-a305-8a2261d5b52f",
+      "name": "Webhook",
+      "webhookId": "dd7c7052-6997-405a-ae11-814de47dbb18"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analisis pesan masuk dari calon klien berikut:\n\"{{ $json.body.pesan }}\"\n\nTugas:\nBerikan output HANYA dalam format JSON murni (tanpa tag markdown ```json) dengan 2 kunci berikut:\n{\n  \"sentimen\": \"Positif\" atau \"Netral\" atau \"Negatif\",\n  \"tindakan\": \"Rekomendasi langkah selanjutnya secara singkat (1 kalimat)\"\n}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        20,
+        0
+      ],
+      "id": "4a1f534a-fbc3-4871-93bd-34d670b0dcd5",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        100,
+        220
+      ],
+      "id": "c624cfc2-1c24-4d4b-8a1a-f4020cd60629",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "nIow40Mk4SExUWlx",
+          "name": "Groq account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "17o-ArY2kVzE-ZAB8EojQwkzpzsdmTbEWSkJSQXrUX-s",
+          "mode": "list",
+          "cachedResultName": "n8n_Leads_Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17o-ArY2kVzE-ZAB8EojQwkzpzsdmTbEWSkJSQXrUX-s/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17o-ArY2kVzE-ZAB8EojQwkzpzsdmTbEWSkJSQXrUX-s/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Tanggal": "={{ $now.format('yyyy-MM-dd HH:mm') }}",
+            "Nama": "={{ $('Webhook').item.json.body.nama }}",
+            "Email": "={{ $('Webhook').item.json.body.email }}",
+            "Pesan Mentah": "={{ $('Webhook').item.json.body.pesan }}",
+            "Sentimen AI": "={{ JSON.parse($json.text).sentimen }}",
+            "Tindakan": "={{ JSON.parse($json.text).tindakan }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Tanggal",
+              "displayName": "Tanggal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nama",
+              "displayName": "Nama",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pesan Mentah",
+              "displayName": "Pesan Mentah",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sentimen AI",
+              "displayName": "Sentimen AI",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tindakan",
+              "displayName": "Tindakan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        380,
+        0
+      ],
+      "id": "eda90a86-437d-4b6f-aa38-02f4b75c5b48",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "q8WSDzlyL1Cgdmpm",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5122327413",
+        "text": "=📥 LEAD BARU DARI WEBHOOK!\n\n👤 Nama: {{ $('Webhook').item.json.body.nama }}\n📧 Email: {{ $('Webhook').item.json.body.email }}\n💬 Pesan: {{ $('Webhook').item.json.body.pesan }}\n\n📊 Sentimen AI: {{ $json['Sentimen AI'] }}\n💡 Rekomendasi Tindakan: {{ $json.Tindakan }}\n\n\n✅ Data berhasil dicatat ke Google Sheets!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        600,
+        0
+      ],
+      "id": "88a70df0-6cb3-4c0f-8796-b5b95ac1edff",
+      "name": "Send a text message",
+      "webhookId": "38391f6b-068d-4f88-8906-5ac39c9230af",
+      "credentials": {
+        "telegramApi": {
+          "id": "ftVHBhmKKDyij2ZW",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a8725d09-6df3-425f-b9b5-a8dd3f7c72e8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b99558b94db1a70f0b79b1ecdbb17881564e0c802dcf8d9ec1ca755852c67857"
+  },
+  "id": "fCrDcgGUqFBO30Ps",
+  "tags": []
+}
