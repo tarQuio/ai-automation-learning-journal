@@ -79,3 +79,31 @@ Build a real-time data ingestion pipeline using Webhooks to parse inbound lead p
 ![Workflow Canvas](./screenshots/day-03-workflow.png)
 ![Google Sheets Entry](./screenshots/day-03-sheets.png)
 ![Telegram Alert](./screenshots/day-03-telegram.png)
+
+---
+
+## 📅 Day 4: AI-Powered Smart Lead Router & Conditional Escalation
+
+### 🎯 Objective
+
+Build an automated lead triage and escalation pipeline that classifies incoming message payloads by urgency and category using LLM, then dynamically routes them using conditional logic nodes (Switch) to trigger instant Telegram escalation for URGENT tickets or standard background logging for routine requests.
+
+### 🛠️ Tech Stack & Nodes Used
+
+- **n8n Self-Hosted** (Webhook Trigger, Basic LLM Chain, Switch Node, Google Sheets Node, Telegram Node)
+- **Groq Chat Model** (LLM Classifier)
+- **Google Sheets API** & **Telegram Bot API**
+- **cURL / Postman**
+
+### 💡 Key Learnings Today
+
+1. Designed multi-branch routing workflows using n8n Switch nodes based on AI evaluation results.
+2. Formatted prompt templates for zero-shot classification returning JSON structure (`urgensi`, `kategori`, `ringkasan`).
+3. Mapped upstream node data explicitly across long-chain branches (`$('Basic LLM Chain').item.json.text`) to avoid undefined payload bugs.
+4. Implemented priority-based alerting to prevent notification fatigue while securing critical escalation events.
+
+### 📷 Workflow & Output
+
+![Workflow Canvas](./screenshots/day-04-workflow.png)
+![Google Sheets Entry](./screenshots/day-04-sheets.png)
+![Telegram Priority Alert](./screenshots/day-04-telegram.png)
