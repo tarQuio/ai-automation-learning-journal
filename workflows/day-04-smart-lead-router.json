@@ -1,0 +1,401 @@
+{
+  "name": "Smart Lead Router & Multi-Channel Escalation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "2b024dda-72b3-425d-91b9-693d754405c6",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        -180
+      ],
+      "id": "9904796f-310b-488d-85e7-78ea2712432c",
+      "name": "Webhook",
+      "webhookId": "2b024dda-72b3-425d-91b9-693d754405c6"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analisis pesan masuk berikut:\n\"{{ $json.body.pesan }}\"\n\nTentukan tingkat urgensinya.\nKembalikan HANYA format JSON murni (tanpa tag markdown ```json) dengan struktur:\n{\n  \"urgensi\": \"URGENT\" atau \"NORMAL\" atau \"LOW\",\n  \"kategori\": \"Penjualan\" atau \"Dukungan Teknis\" atau \"Pertanyaan Umum\",\n  \"ringkasan\": \"Ringkasan pesan dalam 1 kalimat\"\n}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -180,
+        -180
+      ],
+      "id": "672083cc-e1f7-4059-994d-b68ea1b1b3a7",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -100,
+        40
+      ],
+      "id": "b448a1e3-91c3-47b4-8618-f924371dbfa5",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "nIow40Mk4SExUWlx",
+          "name": "Groq account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ JSON.parse($json.text).urgensi }}",
+                    "rightValue": "URGENT",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "b0ebc8dd-8443-4967-84e8-8248f91d54ad"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        180,
+        -180
+      ],
+      "id": "b19ec193-56fa-4793-84ec-b8440d0a53bc",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1GX6OvvXZiI4MVByf72R3JpEMWNQbTpk_RvTAPMNt8uE",
+          "mode": "list",
+          "cachedResultName": "n8n_Leads_Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GX6OvvXZiI4MVByf72R3JpEMWNQbTpk_RvTAPMNt8uE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "urgen",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GX6OvvXZiI4MVByf72R3JpEMWNQbTpk_RvTAPMNt8uE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Tanggal": "={{ $now.toFormat('yyyy-MM-dd HH:mm') }}",
+            "Nama": "={{ $('Webhook').item.json.body.nama }}",
+            "Email": "={{ $('Webhook').item.json.body.email }}",
+            "Pesan Mentah": "={{ $('Webhook').item.json.body.pesan }}",
+            "Sentimen AI": "={{ JSON.parse($('Basic LLM Chain').item.json.text).urgensi }}",
+            "Tindakan": "={{ JSON.parse($('Basic LLM Chain').item.json.text).ringkasan }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Tanggal",
+              "displayName": "Tanggal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nama",
+              "displayName": "Nama",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pesan Mentah",
+              "displayName": "Pesan Mentah",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sentimen AI",
+              "displayName": "Sentimen AI",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tindakan",
+              "displayName": "Tindakan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        400,
+        -280
+      ],
+      "id": "eba59c4f-2d77-4597-85b7-874a3310ce29",
+      "name": "Log Urgent",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "q8WSDzlyL1Cgdmpm",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1GX6OvvXZiI4MVByf72R3JpEMWNQbTpk_RvTAPMNt8uE",
+          "mode": "list",
+          "cachedResultName": "n8n_Leads_Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GX6OvvXZiI4MVByf72R3JpEMWNQbTpk_RvTAPMNt8uE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1879253403,
+          "mode": "list",
+          "cachedResultName": "normal",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GX6OvvXZiI4MVByf72R3JpEMWNQbTpk_RvTAPMNt8uE/edit#gid=1879253403"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Tanggal",
+              "displayName": "Tanggal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nama",
+              "displayName": "Nama",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pesan Mentah",
+              "displayName": "Pesan Mentah",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sentimen AI",
+              "displayName": "Sentimen AI",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tindakan",
+              "displayName": "Tindakan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        400,
+        -80
+      ],
+      "id": "fddfdcd2-36f2-4127-a985-c9275ddca5a9",
+      "name": "Standard Log",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "q8WSDzlyL1Cgdmpm",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5122327413",
+        "text": "=🚨 URGENT ESCALATION ALERT! 🚨\n\n👤 Nama: {{ $('Webhook').item.json.body.nama }}\n📧 Email: {{ $('Webhook').item.json.body.email }}\n📩 Pesan: {{ $('Webhook').item.json.body.pesan }}\n\n🔥 Status Urgensi: {{ JSON.parse($('Basic LLM Chain').item.json.text).urgensi }}\n🏷️ Kategori: {{ JSON.parse($('Basic LLM Chain').item.json.text).kategori }}\n📝 Ringkasan AI: \n{{ JSON.parse($('Basic LLM Chain').item.json.text).ringkasan }}\n\n⚡ Tindakan: Harap hubungi pengguna ini secepatnya! Data telah diprioritaskan di Google Sheets.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        620,
+        -280
+      ],
+      "id": "3e7741ee-fd8c-479d-80c6-4ea338efda4a",
+      "name": "Send a text message",
+      "webhookId": "346c6e50-cfc6-4b4e-a973-62a469b081af",
+      "credentials": {
+        "telegramApi": {
+          "id": "ftVHBhmKKDyij2ZW",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Log Urgent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Standard Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Urgent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Standard Log": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7ee5715f-c683-4d63-be3e-6d3d841d0c68",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b99558b94db1a70f0b79b1ecdbb17881564e0c802dcf8d9ec1ca755852c67857"
+  },
+  "id": "fV5DO5HWgqGNDox1",
+  "tags": []
+}
