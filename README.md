@@ -24,7 +24,9 @@ Automate tracking of incoming emails by extracting essential metadata (Sender, S
 
 ### 📷 Workflow Visual & Output
 
-![Workflow Screenshot](./screenshots/day-01-workflow.png)
+<p align="center">
+  <img src="./screenshots/day-01-workflow.png" alt="Workflow Screenshot" width="100%" />
+</p>
 
 ---
 
@@ -48,8 +50,13 @@ Streamline email processing by connecting a Gmail trigger directly to an LLM via
 
 ### 📷 Workflow & Result
 
-![Workflow Diagram](./screenshots/day-02-workflow.png)
-![Telegram Output](./screenshots/day-02-result.png)
+<p align="center">
+  <img src="./screenshots/day-02-workflow.png" alt="Workflow Diagram" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./screenshots/day-02-result.png" alt="Telegram Output" width="100%" />
+</p>
 
 ---
 
@@ -76,9 +83,17 @@ Build a real-time data ingestion pipeline using Webhooks to parse inbound lead p
 
 ### 📷 Workflow & Output
 
-![Workflow Canvas](./screenshots/day-03-workflow.png)
-![Google Sheets Entry](./screenshots/day-03-sheets.png)
-![Telegram Alert](./screenshots/day-03-telegram.png)
+<p align="center">
+  <img src="./screenshots/day-03-workflow.png" alt="Workflow Canvas" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./screenshots/day-03-sheets.png" alt="Google Sheets Entry" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./screenshots/day-03-telegram.png" alt="Telegram Alert" width="100%" />
+</p>
 
 ---
 
@@ -104,6 +119,49 @@ Build an automated lead triage and escalation pipeline that classifies incoming 
 
 ### 📷 Workflow & Output
 
-![Workflow Canvas](./screenshots/day-04-workflow.png)
-![Google Sheets Entry](./screenshots/day-04-sheets.png)
-![Telegram Priority Alert](./screenshots/day-04-telegram.png)
+<p align="center">
+  <img src="./screenshots/day-04-workflow.png" alt="Workflow Canvas" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./screenshots/day-04-sheets.png" alt="Google Sheets Entry" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./screenshots/day-04-telegram.png" alt="Telegram Priority Alert" width="100%" />
+</p>
+
+---
+
+## 📅 Day 5: Multi-Modal AI Document & Invoice Processing Pipeline
+
+### 🎯 Objective
+
+Build an automated document and receipt/invoice processing pipeline capable of ingesting binary image uploads via n8n Form Trigger, extracting structured financial data using an AI Agent with Multimodal Vision (Gemini 1.5 Flash), sanitizing dynamic JSON payloads, logging structured transactions into Google Sheets, and dispatching real-time formatted financial reports to Telegram.
+
+### 🛠️ Tech Stack & Nodes Used
+
+- **n8n Self-Hosted** (Form Trigger, AI Agent Node, Google Sheets Node, Telegram Node)
+- **Google Gemini Chat Model** (`gemini-2.5-flash`)
+- **Google Sheets API** & **Telegram Bot API**
+
+### 💡 Key Learnings Today
+
+1. Ingested binary image payloads directly from n8n Form Trigger into an AI Agent node connected with Google Gemini Chat Model.
+2. Utilized Multimodal Vision capabilities to automatically process image files and extract structured financial fields (`nama_vendor`, `tanggal`, `total_belanja`, `kategori`, `ringkasan_item`).
+3. Applied regex string sanitization (`.replace(/```json|```/g, '')`) on `$('AI Agent').item.json.output` to eliminate markdown formatting and prevent `undefined` parsing errors.
+4. Built an end-to-end automated financial logging pipeline with real-time Telegram receipt notifications.
+
+### 📷 Workflow & Output
+
+<p align="center">
+  <img src="./screenshots/day-05-workflow.png" alt="Workflow Canvas" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./screenshots/day-05-sheets.png" alt="Google Sheets Entry" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./screenshots/day-05-telegram.png" alt="Telegram Finance Alert" width="100%" />
+</p>

@@ -1,0 +1,244 @@
+{
+  "name": "My workflow 7",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "nota_file",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "nota_file",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -300,
+        0
+      ],
+      "id": "b560e4f3-eae2-40d4-bd41-9f22930dea7b",
+      "name": "On form submission",
+      "webhookId": "a0fc3cf8-1f3a-4877-8cbe-70a553eb4c64"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1w6Q7c7jmPqmHjBnYD-I_KFO66e9g1f-AoLAbFQXNBzQ",
+          "mode": "list",
+          "cachedResultName": "Day 5 sheets",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1w6Q7c7jmPqmHjBnYD-I_KFO66e9g1f-AoLAbFQXNBzQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1w6Q7c7jmPqmHjBnYD-I_KFO66e9g1f-AoLAbFQXNBzQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Tanggal": "={{ JSON.parse($('AI Agent').item.json.output.replace(/```json|```/g, '')).tanggal }}",
+            "Nama Vendor": "={{ JSON.parse($('AI Agent').item.json.output.replace(/```json|```/g, '')).nama_vendor }}",
+            "Total Belanja": "={{ JSON.parse($('AI Agent').item.json.output.replace(/```json|```/g, '')).total_belanja }}",
+            "Kategori": "={{ JSON.parse($('AI Agent').item.json.output.replace(/```json|```/g, '')).kategori }}",
+            "Ringkasan Item": "={{ JSON.parse($('AI Agent').item.json.output.replace(/```json|```/g, '')).ringkasan_item }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Tanggal",
+              "displayName": "Tanggal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nama Vendor",
+              "displayName": "Nama Vendor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Total Belanja",
+              "displayName": "Total Belanja",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Kategori",
+              "displayName": "Kategori",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Ringkasan Item",
+              "displayName": "Ringkasan Item",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        280,
+        0
+      ],
+      "id": "3a317ad8-5f74-4ace-a711-32fa1577fd8d",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "q8WSDzlyL1Cgdmpm",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5122327413",
+        "text": "=🧾 FAKTUR / NOTA BARU TERPROSES!\n\n🏢 Vendor: {{ JSON.parse($('AI Agent').item.json.output.replace(/```json|```/g, '')).nama_vendor }}\n📅 Tanggal Transaksi: {{ JSON.parse($('AI Agent').item.json.output.replace(/```json|```/g, '')).tanggal }}\n🏷️ Kategori: {{ JSON.parse($('AI Agent').item.json.output.replace(/```json|```/g, '')).kategori }}\n\n💰 Total Belanja: Rp {{ Number(JSON.parse($('AI Agent').item.json.output.replace(/```json|```/g, '')).total_belanja).toLocaleString('id-ID') }}\n\n🛒 Rincian Item:\n{{ JSON.parse($('AI Agent').item.json.output.replace(/```json|```/g, '')).ringkasan_item }}\n\n✅ Data nota otomatis diekstrak AI & dicatat ke Google Sheets!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        500,
+        0
+      ],
+      "id": "217ee86c-0055-4f20-b98f-6be91363c1bd",
+      "name": "Send a text message",
+      "webhookId": "6f817ca1-3788-40f4-9c08-018a9566ef7a",
+      "credentials": {
+        "telegramApi": {
+          "id": "ftVHBhmKKDyij2ZW",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Analisis gambar nota/invoice yang diunggah berikut.\n\nTugas:\nEkstrak informasi keuangan dan kembalikan HANYA format JSON murni (tanpa tag markdown ```json) dengan struktur:\n{\n  \"nama_vendor\": \"Nama toko/vendor\",\n  \"tanggal\": \"YYYY-MM-DD\",\n  \"total_belanja\": \"Angka total tanpa simbol mata uang (contoh: 150000)\",\n  \"kategori\": \"Konsumsi / Alat Tulis / Transportasi / Operasional\",\n  \"ringkasan_item\": \"Daftar item singkat yang dibeli\"\n}",
+        "options": {
+          "passthroughBinaryImages": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        0
+      ],
+      "id": "e0d0e36d-63f8-4ec5-b59c-46da44470481",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -140,
+        180
+      ],
+      "id": "457d305e-47f7-4b23-a0ba-dcc758e304d9",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RlJJWFag3dUyQuan",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "59421e7f-7d8f-4062-b48d-d4ec389e6cb3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b99558b94db1a70f0b79b1ecdbb17881564e0c802dcf8d9ec1ca755852c67857"
+  },
+  "id": "kBwSrrGw1h0t2lCN",
+  "tags": []
+}
