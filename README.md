@@ -95,7 +95,7 @@ Build a real-time data ingestion pipeline using Webhooks to parse inbound lead p
   <img src="./screenshots/day-03-telegram.png" alt="Telegram Alert" width="100%" />
 </p>
 
----
+---w
 
 ## 📅 Day 4: AI-Powered Smart Lead Router & Conditional Escalation
 
@@ -164,4 +164,41 @@ Build an automated document and receipt/invoice processing pipeline capable of i
 
 <p align="center">
   <img src="./screenshots/day-05-telegram.png" alt="Telegram Finance Alert" width="100%" />
+</p>
+
+---
+
+## 📅 Day 6: RAG-Powered AI Customer Support Bot with Dynamic Knowledge Base & Memory
+
+### 🎯 Objective
+
+Build an intelligent multi-turn Telegram customer support bot powered by an AI Agent. The bot leverages Google Gemini for LLM reasoning, Window Buffer Memory for conversational context retention across messages, and a Google Sheets Tool / Vector Store as a dynamic Knowledge Base (RAG) to process customer queries with precise, grounded responses.
+
+### 🛠️ Tech Stack & Nodes Used
+
+- **n8n Self-Hosted** (Telegram Trigger, AI Agent Node, Google Sheets Tool, Simple Memory, Telegram Node)
+- **Google Gemini Chat Model** (`gemini-2.5-flash`)
+- **Google Sheets API** (Knowledge Base / RAG Search)
+- **Telegram Bot API** & **ngrok Tunneling**
+
+### 💡 Key Learnings Today
+
+1. **Agentic Workflow**: Understood the architectural differences between a standard LLM Chain and an AI Agent capable of autonomous tool execution and decision-making.
+2. **Conversational Memory**: Implemented Window Buffer Memory to maintain multi-turn chat context across ongoing Telegram interactions.
+3. **Grounding & RAG (Retrieval-Augmented Generation)**: Prevented AI hallucinations by constraining response generation strictly to verified official FAQ documents stored in the Google Sheets Knowledge Base.
+4. **System Prompt & Intent Routing**: Refined system prompt rules to classify user intent—separating conversational greetings from domain-specific inquiries requiring Knowledge Base retrieval.
+5. **Infrastructure Recovery**: Restored a corrupted n8n database instance, migrated workflow data and encrypted credentials using `N8N_ENCRYPTION_KEY`, and re-established active webhooks via ngrok.
+
+### 📷 Workflow & Output
+
+<p align="center">
+  <img src="./screenshots/day-06-workflow.png" alt="Workflow Canvas" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./screenshots/day-06-sheets.png" alt="Google Sheets Knowledge Base" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./screenshots/day-06-telegram.png" alt="Telegram Bot Conversation" width="100%" />
 </p>

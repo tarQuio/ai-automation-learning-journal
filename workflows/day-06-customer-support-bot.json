@@ -1,0 +1,205 @@
+{
+  "name": "Customer Support Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        64
+      ],
+      "id": "ba82f852-7954-4cf0-a7f7-2a70957fc598",
+      "name": "Telegram Trigger",
+      "webhookId": "ee947335-099a-4653-aba1-75e67a3a0ec3",
+      "credentials": {
+        "telegramApi": {
+          "id": "ftVHBhmKKDyij2ZW",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "Kamu adalah Customer Service AI yang ramah, profesional, dan membantu untuk toko kami.\n\nAturan Kerja:\n1. Jika pengguna hanya memberikan sapaan umum (seperti \"Halo\", \"Hai\", \"Selamat pagi\", dsb), jawablah sapaan tersebut dengan ramah dan tanyakan apa yang bisa dibantu TANPA menggunakan tool Google Sheets.\n2. Gunakan Knowledge Base (Google Sheets Tool) HANYA jika pengguna menanyakan pertanyaan spesifik seputar toko, produk, jam operasional, garansi, atau pembayaran.\n3. Jawab pertanyaan berdasarkan data yang ditemukan di Knowledge Base.\n4. Mengingat konteks percakapan dari pesan sebelumnya jika pengguna bertanya secara bertahap.\n5. Jika informasi tidak ditemukan di Knowledge Base, jawab dengan sopan bahwa kamu belum memiliki informasi tersebut dan sarankan untuk menghubungi admin manusia."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        352,
+        64
+      ],
+      "id": "af1066d7-0714-4516-b390-7b2430377212",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        304,
+        304
+      ],
+      "id": "3b546e5d-f907-499d-9554-a120f31540ef",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RlJJWFag3dUyQuan",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        448,
+        304
+      ],
+      "id": "b1d02315-ad93-49ed-aedc-a94f96c881c3",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Gunakan tool ini untuk membaca seluruh data FAQ dan informasi layanan service PC/laptop TechFix Studio dari Google Sheets saat pengguna bertanya seputar operasional, harga/jenis service, garansi, atau pembayaran.",
+        "documentId": {
+          "__rl": true,
+          "value": "12cVexKPfgxiUH5ScLvmqhmeDC7M7FPHfGdPyYZKg9EA",
+          "mode": "list",
+          "cachedResultName": "Day 6 - FAQ Knowledge Base",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12cVexKPfgxiUH5ScLvmqhmeDC7M7FPHfGdPyYZKg9EA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12cVexKPfgxiUH5ScLvmqhmeDC7M7FPHfGdPyYZKg9EA/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        560,
+        304
+      ],
+      "id": "1d48a09b-b492-48e7-9f4d-0c2d4bb7d71a",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "q8WSDzlyL1Cgdmpm",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        752,
+        64
+      ],
+      "id": "aaa5a640-7b28-45fb-a567-550b75673720",
+      "name": "Send a text message",
+      "webhookId": "01c241fe-1184-4ef4-9cb0-5ce3e7824a4c",
+      "credentials": {
+        "telegramApi": {
+          "id": "ftVHBhmKKDyij2ZW",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "79585767-3e68-447b-9129-431204a0f3bc",
+  "meta": {
+    "instanceId": "b99558b94db1a70f0b79b1ecdbb17881564e0c802dcf8d9ec1ca755852c67857"
+  },
+  "nodeGroups": [],
+  "id": "eMdTFsz3kEJIBlNi",
+  "tags": []
+}
