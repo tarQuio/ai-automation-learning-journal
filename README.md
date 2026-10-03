@@ -202,3 +202,37 @@ Build an intelligent multi-turn Telegram customer support bot powered by an AI A
 <p align="center">
   <img src="./screenshots/day-06-telegram.png" alt="Telegram Bot Conversation" width="100%" />
 </p>
+
+---
+
+## 📅 Day 7: AI Executive Assistant – Multi-Tool Calendar & Task Orchestrator
+
+### 🎯 Objective
+
+Build an autonomous AI Executive Assistant using n8n Agentic Architecture. The workflow accepts natural language instructions via n8n Form, leverages Google Gemini (`gemini-2.5-flash`) as the core reasoning engine with dynamic system prompt time-offset calculations, and dynamically executes multi-tool actions across Google Calendar and Google Tasks before dispatching an execution summary to Telegram.
+
+### 🛠️ Tech Stack & Nodes Used
+
+- **n8n Self-Hosted** (Form Trigger, AI Agent Node, Google Calendar Tool, Google Tasks Tool, Telegram Node)
+- **Google Gemini Chat Model** (`gemini-2.5-flash`)
+- **Google Calendar API** & **Google Tasks API**
+- **Telegram Bot API**
+
+### 💡 Key Learnings Today
+
+1. **Multi-Tool Agentic Orchestration**: Built an autonomous AI Agent capable of dynamically selecting and executing multiple tools (Google Calendar and Google Tasks) in a single execution pipeline based on natural language intent.
+2. **Dynamic Time-Offset Calculations**: Configured Luxon time expressions (`$now.setZone().plus()`) in the system prompt to allow the LLM to calculate relative time references (e.g., "besok", "lusa") accurately in real-time.
+3. **Stateless Efficiency**: Optimized workflow architecture by eliminating redundant Memory nodes for stateless single-shot form triggers, reducing execution latency and unnecessary processing overhead.
+4. **Tool Argument Alignment**: Configured tool parameters (`summary`, `start`, `end`, `title`) to be dynamically populated by the AI model (`Defined by Model`) using strict ISO 8601 timestamps and clean titles.
+
+### 📷 Workflow & Output
+
+<p align="center">
+  <img src="./screenshots/day-07-workflow.png" alt="Workflow Canvas" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./screenshots/day-07-calendar.png" alt="Google Calendar Output" width="32%" />
+  <img src="./screenshots/day-07-tasks.png" alt="Google Tasks Output" width="32%" />
+  <img src="./screenshots/day-07-telegram.png" alt="Telegram Notification Output" width="32%" />
+</p>
