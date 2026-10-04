@@ -14,15 +14,7 @@
         64,
         64
       ],
-      "id": "ba82f852-7954-4cf0-a7f7-2a70957fc598",
-      "name": "Telegram Trigger",
-      "webhookId": "ee947335-099a-4653-aba1-75e67a3a0ec3",
-      "credentials": {
-        "telegramApi": {
-          "id": "ftVHBhmKKDyij2ZW",
-          "name": "Telegram account"
-        }
-      }
+      "name": "Telegram Trigger"
     },
     {
       "parameters": {
@@ -38,7 +30,6 @@
         352,
         64
       ],
-      "id": "af1066d7-0714-4516-b390-7b2430377212",
       "name": "AI Agent"
     },
     {
@@ -51,14 +42,7 @@
         304,
         304
       ],
-      "id": "3b546e5d-f907-499d-9554-a120f31540ef",
-      "name": "Google Gemini Chat Model",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "RlJJWFag3dUyQuan",
-          "name": "Google Gemini(PaLM) Api account"
-        }
-      }
+      "name": "Google Gemini Chat Model"
     },
     {
       "parameters": {
@@ -71,7 +55,6 @@
         448,
         304
       ],
-      "id": "b1d02315-ad93-49ed-aedc-a94f96c881c3",
       "name": "Simple Memory"
     },
     {
@@ -80,17 +63,15 @@
         "toolDescription": "Gunakan tool ini untuk membaca seluruh data FAQ dan informasi layanan service PC/laptop TechFix Studio dari Google Sheets saat pengguna bertanya seputar operasional, harga/jenis service, garansi, atau pembayaran.",
         "documentId": {
           "__rl": true,
-          "value": "12cVexKPfgxiUH5ScLvmqhmeDC7M7FPHfGdPyYZKg9EA",
+          "value": "YOUR_SPREADSHEET_ID",
           "mode": "list",
-          "cachedResultName": "Day 6 - FAQ Knowledge Base",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12cVexKPfgxiUH5ScLvmqhmeDC7M7FPHfGdPyYZKg9EA/edit?usp=drivesdk"
+          "cachedResultName": "Day 6 - FAQ Knowledge Base"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
-          "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12cVexKPfgxiUH5ScLvmqhmeDC7M7FPHfGdPyYZKg9EA/edit#gid=0"
+          "cachedResultName": "Sheet1"
         },
         "options": {}
       },
@@ -100,14 +81,7 @@
         560,
         304
       ],
-      "id": "1d48a09b-b492-48e7-9f4d-0c2d4bb7d71a",
-      "name": "Get row(s) in sheet in Google Sheets",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "q8WSDzlyL1Cgdmpm",
-          "name": "Google Sheets account"
-        }
-      }
+      "name": "Get row(s) in sheet in Google Sheets"
     },
     {
       "parameters": {
@@ -121,15 +95,7 @@
         752,
         64
       ],
-      "id": "aaa5a640-7b28-45fb-a567-550b75673720",
-      "name": "Send a text message",
-      "webhookId": "01c241fe-1184-4ef4-9cb0-5ce3e7824a4c",
-      "credentials": {
-        "telegramApi": {
-          "id": "ftVHBhmKKDyij2ZW",
-          "name": "Telegram account"
-        }
-      }
+      "name": "Send a text message"
     }
   ],
   "pinData": {},
@@ -190,16 +156,11 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "79585767-3e68-447b-9129-431204a0f3bc",
-  "meta": {
-    "instanceId": "b99558b94db1a70f0b79b1ecdbb17881564e0c802dcf8d9ec1ca755852c67857"
-  },
   "nodeGroups": [],
-  "id": "eMdTFsz3kEJIBlNi",
   "tags": []
 }

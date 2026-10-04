@@ -1,5 +1,5 @@
 {
-  "name": "Day 8-Automated Document PDF Parsing & AI Technical Knowledge Extractor",
+  "name": "Day 8 - AI Executive Assistant",
   "nodes": [
     {
       "parameters": {
@@ -21,16 +21,14 @@
         -160,
         -48
       ],
-      "id": "94009f29-66b2-4a13-ada4-dac952627404",
-      "name": "On form submission",
-      "webhookId": "987e7e78-3c42-49ce-844b-94193a9b213d"
+      "name": "On form submission"
     },
     {
       "parameters": {
         "promptType": "define",
         "text": "={{ $('On form submission').item.json.instruction }}",
         "options": {
-          "systemMessage": "=Kamu adalah AI Executive Assistant.\n\nACUAN WAKTU SISTEM:\n- Waktu Sekarang: {{ $now.setZone('Asia/Makassar').format('yyyy-MM-dd HH:mm:ss') }}\n- Tanggal Hari Ini: {{ $now.setZone('Asia/Makassar').format('yyyy-MM-dd') }}\n- Tanggal BESOK: {{ $now.setZone('Asia/Makassar').plus({ days: 1 }).format('yyyy-MM-dd') }}\n\nATURAN GOOGLE CALENDAR:\n1. Jika pengguna menyebut \"besok\", kamu WAJIB menggunakan Tanggal BESOK.\n2. Format parameter `start` dan `end` WAJIB ISO 8601 dengan offset jam: YYYY-MM-DDTHH:mm:ss.\n   Atur durasi default 1 jam (misal jam 15:00 sampai 16:00).\n3. Field `summary`: Isikan HANYA judul acara (misal: \"Meeting Koordinasi Tamangapa Fest\") tanpa teks waktu.\n\nATURAN BALASAN AKHIR:\n- Saat memberikan balasan konfirmasi, JANGAN gunakan format Markdown kompleks seperti bintang ganda (**).\n- Tulis balasan dalam bentuk teks biasa yang rapi tanpa simbol Markdown khusus agar tidak merusak formatting API Telegram.",
+          "systemMessage": "=Kamu adalah AI Executive Assistant.\n\nACUAN WAKTU SISTEM:\n- Waktu Sekarang: {{ $now.setZone('Asia/Makassar').format('yyyy-MM-dd HH:mm:ss') }}\n- Tanggal Hari Ini: {{ $now.setZone('Asia/Makassar').format('yyyy-MM-dd') }}\n- Tanggal BESOK: {{$now.setZone('Asia/Makassar').plus({ days: 1 }).format('yyyy-MM-dd') }}\n\nATURAN GOOGLE CALENDAR:\n1. Jika pengguna menyebut \"besok\", kamu WAJIB menggunakan Tanggal BESOK.\n2. Format parameter `start` dan `end` WAJIB ISO 8601 dengan offset jam: YYYY-MM-DDTHH:mm:ss.\n   Atur durasi default 1 jam (misal jam 15:00 sampai 16:00).\n3. Field `summary`: Isikan HANYA judul acara (misal: \"Meeting Koordinasi\") tanpa teks waktu.\n\nATURAN BALASAN AKHIR:\n- Saat memberikan balasan konfirmasi, JANGAN gunakan format Markdown kompleks seperti bintang ganda (**).\n- Tulis balasan dalam bentuk teks biasa yang rapi tanpa simbol Markdown khusus agar tidak merusak formatting API Telegram.",
           "maxIterations": 5
         }
       },
@@ -40,7 +38,6 @@
         80,
         -48
       ],
-      "id": "95a150ce-403f-450b-94d0-9bde5b6b8a44",
       "name": "AI Agent"
     },
     {
@@ -53,20 +50,13 @@
         32,
         192
       ],
-      "id": "171fad3d-a408-40fa-a98c-b4d173f0beb3",
-      "name": "Google Gemini Chat Model",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "RlJJWFag3dUyQuan",
-          "name": "Google Gemini(PaLM) Api account"
-        }
-      }
+      "name": "Google Gemini Chat Model"
     },
     {
       "parameters": {
         "descriptionType": "manual",
         "toolDescription": "Use this tool to create a to-do item or task in Google Tasks.",
-        "task": "a2MyaE5xUmt6RDZKeWk2Yg",
+        "task": "YOUR_TASK_LIST_ID",
         "title": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Title', ``, 'string') }}",
         "additionalFields": {}
       },
@@ -76,14 +66,7 @@
         160,
         192
       ],
-      "id": "74aeeee5-4710-4130-bee9-69a23284e6d3",
-      "name": "Create a task in Google Tasks",
-      "credentials": {
-        "googleTasksOAuth2Api": {
-          "id": "Tp38nWZZCU7jGEZx",
-          "name": "Google Tasks account"
-        }
-      }
+      "name": "Create a task in Google Tasks"
     },
     {
       "parameters": {
@@ -91,7 +74,7 @@
         "toolDescription": "Use this tool to schedule meetings, appointments, or reminders in Google Calendar.",
         "calendar": {
           "__rl": true,
-          "value": "79dea195b953fa39bfee6d8b9757c396cde565666c9c2e702dd0478db698129b@group.calendar.google.com",
+          "value": "YOUR_CALENDAR_ID",
           "mode": "list",
           "cachedResultName": "N8n-calendar"
         },
@@ -108,18 +91,11 @@
         288,
         192
       ],
-      "id": "86d66944-fcd5-4bdf-bbeb-c8e7c8f91e9d",
-      "name": "Create an event in Google Calendar",
-      "credentials": {
-        "googleCalendarOAuth2Api": {
-          "id": "pSAhvRlaWMyea8w2",
-          "name": "Google Calendar account"
-        }
-      }
+      "name": "Create an event in Google Calendar"
     },
     {
       "parameters": {
-        "chatId": "5122327413",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
         "text": "={{ $json.output }}",
         "additionalFields": {}
       },
@@ -129,15 +105,7 @@
         448,
         -48
       ],
-      "id": "b068b0c1-4793-4a6b-b5fa-7cb95d85d786",
-      "name": "Send a text message",
-      "webhookId": "d49619a9-a325-4c8e-bbe8-9f9a85e59562",
-      "credentials": {
-        "telegramApi": {
-          "id": "ftVHBhmKKDyij2ZW",
-          "name": "Telegram account"
-        }
-      }
+      "name": "Send a text message"
     }
   ],
   "pinData": {},
@@ -203,12 +171,6 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "55c6b3e6-7480-4187-afe2-c14c684e82c1",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "b99558b94db1a70f0b79b1ecdbb17881564e0c802dcf8d9ec1ca755852c67857"
-  },
   "nodeGroups": [],
-  "id": "bG46De8ZCrr6NySM",
   "tags": []
 }

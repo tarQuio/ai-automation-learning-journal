@@ -1,5 +1,5 @@
 {
-  "name": "My workflow 7",
+  "name": "Day 5: Document & Invoice Processor Workflow",
   "nodes": [
     {
       "parameters": {
@@ -20,26 +20,22 @@
         -300,
         0
       ],
-      "id": "b560e4f3-eae2-40d4-bd41-9f22930dea7b",
-      "name": "On form submission",
-      "webhookId": "a0fc3cf8-1f3a-4877-8cbe-70a553eb4c64"
+      "name": "On form submission"
     },
     {
       "parameters": {
         "operation": "append",
         "documentId": {
           "__rl": true,
-          "value": "1w6Q7c7jmPqmHjBnYD-I_KFO66e9g1f-AoLAbFQXNBzQ",
+          "value": "YOUR_SPREADSHEET_ID",
           "mode": "list",
-          "cachedResultName": "Day 5 sheets",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1w6Q7c7jmPqmHjBnYD-I_KFO66e9g1f-AoLAbFQXNBzQ/edit?usp=drivesdk"
+          "cachedResultName": "Day 5 sheets"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
-          "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1w6Q7c7jmPqmHjBnYD-I_KFO66e9g1f-AoLAbFQXNBzQ/edit#gid=0"
+          "cachedResultName": "Sheet1"
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -114,18 +110,11 @@
         280,
         0
       ],
-      "id": "3a317ad8-5f74-4ace-a711-32fa1577fd8d",
-      "name": "Append row in sheet",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "q8WSDzlyL1Cgdmpm",
-          "name": "Google Sheets account"
-        }
-      }
+      "name": "Append row in sheet"
     },
     {
       "parameters": {
-        "chatId": "5122327413",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
         "text": "=🧾 FAKTUR / NOTA BARU TERPROSES!\n\n🏢 Vendor: {{ JSON.parse($('AI Agent').item.json.output.replace(/```json|```/g, '')).nama_vendor }}\n📅 Tanggal Transaksi: {{ JSON.parse($('AI Agent').item.json.output.replace(/```json|```/g, '')).tanggal }}\n🏷️ Kategori: {{ JSON.parse($('AI Agent').item.json.output.replace(/```json|```/g, '')).kategori }}\n\n💰 Total Belanja: Rp {{ Number(JSON.parse($('AI Agent').item.json.output.replace(/```json|```/g, '')).total_belanja).toLocaleString('id-ID') }}\n\n🛒 Rincian Item:\n{{ JSON.parse($('AI Agent').item.json.output.replace(/```json|```/g, '')).ringkasan_item }}\n\n✅ Data nota otomatis diekstrak AI & dicatat ke Google Sheets!",
         "additionalFields": {}
       },
@@ -135,15 +124,7 @@
         500,
         0
       ],
-      "id": "217ee86c-0055-4f20-b98f-6be91363c1bd",
-      "name": "Send a text message",
-      "webhookId": "6f817ca1-3788-40f4-9c08-018a9566ef7a",
-      "credentials": {
-        "telegramApi": {
-          "id": "ftVHBhmKKDyij2ZW",
-          "name": "Telegram account"
-        }
-      }
+      "name": "Send a text message"
     },
     {
       "parameters": {
@@ -159,7 +140,6 @@
         -80,
         0
       ],
-      "id": "e0d0e36d-63f8-4ec5-b59c-46da44470481",
       "name": "AI Agent"
     },
     {
@@ -173,14 +153,7 @@
         -140,
         180
       ],
-      "id": "457d305e-47f7-4b23-a0ba-dcc758e304d9",
-      "name": "Google Gemini Chat Model",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "RlJJWFag3dUyQuan",
-          "name": "Google Gemini(PaLM) Api account"
-        }
-      }
+      "name": "Google Gemini Chat Model"
     }
   ],
   "pinData": {},
@@ -234,11 +207,5 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "59421e7f-7d8f-4062-b48d-d4ec389e6cb3",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "b99558b94db1a70f0b79b1ecdbb17881564e0c802dcf8d9ec1ca755852c67857"
-  },
-  "id": "kBwSrrGw1h0t2lCN",
   "tags": []
 }

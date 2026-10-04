@@ -4,7 +4,7 @@
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "2b024dda-72b3-425d-91b9-693d754405c6",
+        "path": "YOUR_WEBHOOK_PATH",
         "options": {}
       },
       "type": "n8n-nodes-base.webhook",
@@ -13,9 +13,7 @@
         -400,
         -180
       ],
-      "id": "9904796f-310b-488d-85e7-78ea2712432c",
-      "name": "Webhook",
-      "webhookId": "2b024dda-72b3-425d-91b9-693d754405c6"
+      "name": "Webhook"
     },
     {
       "parameters": {
@@ -29,7 +27,6 @@
         -180,
         -180
       ],
-      "id": "672083cc-e1f7-4059-994d-b68ea1b1b3a7",
       "name": "Basic LLM Chain"
     },
     {
@@ -43,14 +40,7 @@
         -100,
         40
       ],
-      "id": "b448a1e3-91c3-47b4-8618-f924371dbfa5",
-      "name": "Groq Chat Model",
-      "credentials": {
-        "groqApi": {
-          "id": "nIow40Mk4SExUWlx",
-          "name": "Groq account 2"
-        }
-      }
+      "name": "Groq Chat Model"
     },
     {
       "parameters": {
@@ -71,8 +61,7 @@
                     "operator": {
                       "type": "string",
                       "operation": "equals"
-                    },
-                    "id": "b0ebc8dd-8443-4967-84e8-8248f91d54ad"
+                    }
                   }
                 ],
                 "combinator": "and"
@@ -90,7 +79,6 @@
         180,
         -180
       ],
-      "id": "b19ec193-56fa-4793-84ec-b8440d0a53bc",
       "name": "Switch"
     },
     {
@@ -98,17 +86,15 @@
         "operation": "append",
         "documentId": {
           "__rl": true,
-          "value": "1GX6OvvXZiI4MVByf72R3JpEMWNQbTpk_RvTAPMNt8uE",
+          "value": "YOUR_SPREADSHEET_ID",
           "mode": "list",
-          "cachedResultName": "n8n_Leads_Database",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GX6OvvXZiI4MVByf72R3JpEMWNQbTpk_RvTAPMNt8uE/edit?usp=drivesdk"
+          "cachedResultName": "n8n_Leads_Database"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
-          "cachedResultName": "urgen",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GX6OvvXZiI4MVByf72R3JpEMWNQbTpk_RvTAPMNt8uE/edit#gid=0"
+          "cachedResultName": "urgen"
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -188,31 +174,22 @@
         400,
         -280
       ],
-      "id": "eba59c4f-2d77-4597-85b7-874a3310ce29",
-      "name": "Log Urgent",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "q8WSDzlyL1Cgdmpm",
-          "name": "Google Sheets account"
-        }
-      }
+      "name": "Log Urgent"
     },
     {
       "parameters": {
         "operation": "append",
         "documentId": {
           "__rl": true,
-          "value": "1GX6OvvXZiI4MVByf72R3JpEMWNQbTpk_RvTAPMNt8uE",
+          "value": "YOUR_SPREADSHEET_ID",
           "mode": "list",
-          "cachedResultName": "n8n_Leads_Database",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GX6OvvXZiI4MVByf72R3JpEMWNQbTpk_RvTAPMNt8uE/edit?usp=drivesdk"
+          "cachedResultName": "n8n_Leads_Database"
         },
         "sheetName": {
           "__rl": true,
           "value": 1879253403,
           "mode": "list",
-          "cachedResultName": "normal",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GX6OvvXZiI4MVByf72R3JpEMWNQbTpk_RvTAPMNt8uE/edit#gid=1879253403"
+          "cachedResultName": "normal"
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -285,18 +262,11 @@
         400,
         -80
       ],
-      "id": "fddfdcd2-36f2-4127-a985-c9275ddca5a9",
-      "name": "Standard Log",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "q8WSDzlyL1Cgdmpm",
-          "name": "Google Sheets account"
-        }
-      }
+      "name": "Standard Log"
     },
     {
       "parameters": {
-        "chatId": "5122327413",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
         "text": "=🚨 URGENT ESCALATION ALERT! 🚨\n\n👤 Nama: {{ $('Webhook').item.json.body.nama }}\n📧 Email: {{ $('Webhook').item.json.body.email }}\n📩 Pesan: {{ $('Webhook').item.json.body.pesan }}\n\n🔥 Status Urgensi: {{ JSON.parse($('Basic LLM Chain').item.json.text).urgensi }}\n🏷️ Kategori: {{ JSON.parse($('Basic LLM Chain').item.json.text).kategori }}\n📝 Ringkasan AI: \n{{ JSON.parse($('Basic LLM Chain').item.json.text).ringkasan }}\n\n⚡ Tindakan: Harap hubungi pengguna ini secepatnya! Data telah diprioritaskan di Google Sheets.",
         "additionalFields": {}
       },
@@ -306,15 +276,7 @@
         620,
         -280
       ],
-      "id": "3e7741ee-fd8c-479d-80c6-4ea338efda4a",
-      "name": "Send a text message",
-      "webhookId": "346c6e50-cfc6-4b4e-a973-62a469b081af",
-      "credentials": {
-        "telegramApi": {
-          "id": "ftVHBhmKKDyij2ZW",
-          "name": "Telegram account"
-        }
-      }
+      "name": "Send a text message"
     }
   ],
   "pinData": {},
@@ -391,11 +353,5 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "7ee5715f-c683-4d63-be3e-6d3d841d0c68",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "b99558b94db1a70f0b79b1ecdbb17881564e0c802dcf8d9ec1ca755852c67857"
-  },
-  "id": "fV5DO5HWgqGNDox1",
   "tags": []
 }

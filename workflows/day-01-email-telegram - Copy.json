@@ -18,12 +18,19 @@
         -400,
         -20
       ],
-      "name": "Gmail Trigger"
+      "id": "7a7fe59c-b313-401f-a344-470055ff3160",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Ow4ftYoUC1IMeG7j",
+          "name": "Gmail account 2"
+        }
+      }
     },
     {
       "parameters": {
-        "chatId": "YOUR_TELEGRAM_CHAT_ID",
-        "text": "=📩 *EMAIL BARU*\n👤 *Dari:* {{ $json.pengirim }}\n📌 *Subjek:* {{ $json.subjek }}\n📝 *Isi:* {{ $json.isi }}",
+        "chatId": "=YOUR_TELEGRAM_CHAT_ID",
+        "text": "=📩 *EMAIL BARU*\n👤 *Dari:* {{ $json.pengirim }}\n📌 *Subjek:* {{ $json.subjek }}\n💬 *Isi:* {{ $json.isi }}",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
@@ -32,7 +39,15 @@
         40,
         -20
       ],
-      "name": "Send a text message"
+      "id": "ef8a7e8f-7c70-4573-9006-27b9585e76f9",
+      "name": "Send a text message",
+      "webhookId": "ab61b406-a3f9-41af-9f4c-719148f739fc",
+      "credentials": {
+        "telegramApi": {
+          "id": "ftVHBhmKKDyij2ZW",
+          "name": "Telegram account"
+        }
+      }
     },
     {
       "parameters": {
@@ -44,6 +59,7 @@
         -180,
         -20
       ],
+      "id": "dda13a75-2328-4b47-bd19-41265b965cc5",
       "name": "Code"
     }
   ],
@@ -76,5 +92,11 @@
   "settings": {
     "executionOrder": "v1"
   },
+  "versionId": "2f211881-5144-4d5e-a342-6258c81d58d6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b99558b94db1a70f0b79b1ecdbb17881564e0c802dcf8d9ec1ca755852c67857"
+  },
+  "id": "dBJyj1pT2AUi0uS4",
   "tags": []
 }
