@@ -372,3 +372,80 @@ The Gemini free-tier quota ran out during testing and the bot stopped working. D
 ![Supabase Table](screenshots/day-08-supabase.png)
 
 ![Telegram Answer with Citation](screenshots/day-08-telegram.png)
+
+---
+
+## 📅 Day 9: Production Hardening – Error Alerting, Logging & Model Fallback
+
+### 🎯 Objective
+
+Make the Day 8 RAG assistant resilient and observable. During Day 8 the Gemini free-tier quota ran out and the bot silently stopped working with nobody notified. This day adds a global error workflow that alerts and logs failures, a fallback LLM so a single provider limit does not take the bot down, and explicit verification of knowledge-base tool results.
+
+### 🛠️ Tech Stack & Nodes Used
+
+- **n8n Self-Hosted** (Error Trigger, Code Node, Google Sheets Node, Telegram Node, Stop and Error, AI Agent with Fallback Model, Retry On Fail)
+- **Google Gemini Chat Model** (primary) and **Groq Chat Model** (fallback)
+- **Supabase Vector Store** (retrieval tool) with **Google Gemini Embeddings**
+- **Google Sheets API** (error log) and **Telegram Bot API**
+
+### 🏗️ Architecture
+
+```
+Global Error Handler
+Error Trigger → Code (format: time, workflow, node, error, execution link)
+  → Google Sheets (append to "Error Log") → Telegram (alert to owner)
+
+Q&A Bot (Day 8 workflow, hardened)
+Telegram Trigger → AI Agent (Gemini → fallback Groq)  ⇄ Supabase Vector Store tool
+  ├─ Success → Code (verify tool result via intermediate steps)
+  │      ├─ OK    → Telegram reply with answer
+  │      └─ Error → Telegram (friendly message) → Stop and Error
+  └─ Error → Telegram (friendly message) → Stop and Error
+Stop and Error marks the execution as failed → triggers the Global Error Handler
+```
+
+### 💡 Key Learnings Today
+
+1. **Error Workflows**: A dedicated workflow with an Error Trigger receives the failed workflow's name, last executed node, error message and execution URL. It only fires for production (active) executions, not manual test runs.
+2. **Fallback models**: The AI Agent can switch to a second LLM automatically when the primary fails (verified by breaking the Gemini key and still receiving answers via Groq).
+3. **Verifying tool results**: Enabling intermediate steps and inspecting the tool output lets the workflow detect a failed knowledge-base lookup instead of trusting the agent's final text.
+4. **Handled errors are not errors**: If a failure is routed to an error branch that succeeds, n8n records the execution as successful and the global error workflow never fires. A Stop and Error node at the end of the branch makes the execution fail on purpose, so the user gets a friendly message and the owner still gets the alert and a log entry.
+
+### 🧩 Challenges & Solutions
+
+| Problem                                                            | Cause / Finding                                                                                                    | Solution                                                                                                                |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| Error alerts never reached the global error handler                | Errors were routed to an error branch that sent a Telegram message successfully, so the execution ended as Success | Added a Stop and Error node after the user-facing message to mark the execution as failed                               |
+| Telegram showed the literal text `{{ $json.error }}`               | The Text field was in Fixed mode instead of Expression mode                                                        | Switched the field to Expression and replaced raw error text with a short alert plus the execution ID                   |
+| Agent branch with On Error set to continue had no handler attached | Unconnected error output ends the execution silently                                                               | Connected the Agent error output to the same notification and Stop and Error path                                       |
+| Raw API errors were being sent to the end user                     | A single Telegram node served both the user and the owner                                                          | Split into a friendly user message and a separate owner alert; detailed errors stay in the Executions tab and the Sheet |
+
+### ✅ Failure Tests
+
+| Scenario | Injected failure                  | Result                                                                                          |
+| -------- | --------------------------------- | ----------------------------------------------------------------------------------------------- |
+| 1        | Invalid Gemini chat API key       | Answer still delivered via Groq fallback                                                        |
+| 2        | Invalid embedding API key         | User gets a friendly message, owner gets an alert, execution marked failed, row logged in Sheet |
+| 3        | Both chat models invalid          | Same as above via the Agent error path                                                          |
+| 4        | Normal operation (all keys valid) | Answer with cited page, no alert                                                                |
+
+### 🔮 Next Improvement
+
+Add a scheduled health check that probes the embedding and chat APIs and reports quota problems before a user hits them, and move shared logic into reusable sub-workflows.
+
+### 📷 Workflow & Output
+
+<p align="center">
+  <img src="./screenshots/day-09-qa-workflow.png" alt="Hardened Q&A Workflow" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./screenshots/day-09-error-handler.png" alt="Global Error Handler Workflow" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./screenshots/day-09-error-log.png" alt="Error Log in Google Sheets" width="49%" />
+  <img src="./screenshots/day-09-telegram-alert.png" alt="Telegram Alert" width="49%" />
+</p>
+
+---
