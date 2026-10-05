@@ -289,7 +289,7 @@ Result: 113 text pages ingested into roughly 360 chunks, each stored with `sumbe
 
 ### ✅ Initial Validation
 
-Asked "what are the margin sizes?" via Telegram. The bot returned 4 cm (top, left) and 3 cm (bottom, right) for Latin script, and cited printed page 34, which matches the original PDF. A full evaluation (15 questions including paraphrased ones, plus 3 out-of-scope questions to test refusal) is documented separately in `docs/day-08-evaluation.md`.
+Asked "what are the margin sizes?" via Telegram. The bot returned 4 cm (top, left) and 3 cm (bottom, right) for Latin script, and cited printed page 34, which matches the original PDF. A full evaluation (15 questions plus 3 out-of-scope questions) will be added in a follow-up update.".
 
 ### 🔮 Next Improvement
 
