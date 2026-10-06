@@ -449,3 +449,77 @@ Add a scheduled health check that probes the embedding and chat APIs and reports
 </p>
 
 ---
+
+## 📅 Day 10: Proactive Health Monitoring – Scheduled Probes, Stateful Alerting & Reusable Sub-workflow
+
+### 🎯 Objective
+
+Move from reacting to failures to detecting them before users are affected. In Day 8 the Gemini free-tier quota ran out and nobody knew until the bot stopped answering, and Day 9 only alerted after a user request had already failed. This day adds a scheduled health check that probes every external dependency of the RAG assistant (Gemini embeddings, Gemini chat, Groq fallback, Supabase), sends an alert only when a status actually changes, and centralizes notifications in a reusable sub-workflow shared with the global error handler.
+
+### 🛠️ Tech Stack & Nodes Used
+
+- **n8n Self-Hosted** (Schedule Trigger, HTTP Request, Supabase Node, Edit Fields, Merge, Code Node with workflow static data, If, Execute Workflow, Execute Workflow Trigger, Telegram Node)
+- **Google Gemini API** (embedding and chat probes) and **Groq API**
+- **Supabase** (database probe)
+- **Telegram Bot API**
+
+### 🏗️ Architecture
+
+```
+Health Check (every N minutes)
+Schedule Trigger ─┬→ Gemini Embedding (HTTP) → Edit Fields (probe name) ─┐
+                  ├→ Gemini Chat (HTTP)      → Edit Fields (probe name) ─┤
+                  ├→ Groq (HTTP)             → Edit Fields (probe name) ─┼→ Merge → Code → If (alert?) → Execute Workflow
+                  └→ Supabase (Get Many)     → Edit Fields (probe name) ─┘                                   │
+                                                                                                             ▼
+Sub: Send Alert (Execute Workflow Trigger: judul, pesan) → Telegram  ◄── also called by the Global Error Handler
+```
+
+The Code node compares each probe's result with the status saved from the previous run (`$getWorkflowStaticData`) and only produces an alert when a probe has failed several times in a row, or has recovered after being reported as failed.
+
+### 💡 Key Learnings Today
+
+1. **Probes**: A probe is a small, cheap request to one dependency that answers only "healthy or not". Running them on a schedule exposes quota, key and availability problems before a user hits them.
+2. **Failures as data**: With the HTTP Request option Never Error, a failing API returns its status code and error body as normal data instead of stopping the workflow, so one broken probe cannot hide the others.
+3. **Stateful alerting**: Workflow static data stores the previous status of each probe between executions, so the alert fires on a change (OK to failed, failed to recovered) rather than on every run. Static data only persists in production (active) executions.
+4. **Debouncing**: Requiring consecutive failures before alerting filters out transient provider hiccups (a real HTTP 503 from Google appeared during testing) and avoids alert fatigue.
+5. **Sub-workflows**: An Execute Workflow Trigger with defined inputs turns notification logic into a reusable building block called from both the health check and the global error handler.
+
+### 🧩 Challenges & Solutions
+
+| Problem                                                                             | Cause / Finding                                                                           | Solution                                                                                                   |
+| ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Probe results disappeared and every probe looked healthy                            | The Edit Fields nodes only set the probe name and dropped the original response           | Enabled Include Other Input Fields and gave each probe a unique name                                       |
+| Gemini probe returned `403 PERMISSION_DENIED`                                       | The HTTP Request nodes had no authentication                                              | Attached the predefined Google Gemini credential (and the Groq credential) instead of putting keys in URLs |
+| Risk of an alert on every run while a dependency stays down                         | A stateless check cannot tell "still broken" from "newly broken"                          | Stored per-probe state in workflow static data and alert only on changes                                   |
+| A transient `503` on the chat probe produced a failure/recovery pair within minutes | Provider hiccups are indistinguishable from real outages on a single check                | Required 2 consecutive failures before alerting; recovery is only sent if a failure alert was sent         |
+| Alert text showed literal "judul:" and "pesan:" labels on one line                  | The Telegram text expression in the sub-workflow contained field labels and no line break | Rewrote the expression as two lines with no labels                                                         |
+| Execution history would grow quickly                                                | The raw embedding vector (3072 numbers) was carried through every run                     | Kept only the fields the Code node needs (`probe`, `statusCode`, `error`)                                  |
+
+### ✅ Failure Tests
+
+| Scenario | Injected failure                                           | Result                                                                  |
+| -------- | ---------------------------------------------------------- | ----------------------------------------------------------------------- |
+| 1        | Invalid API key on the embedding probe                     | One failure alert (`HTTP 400`), no repeats while the key stayed invalid |
+| 2        | Key restored                                               | One recovery notification                                               |
+| 3        | Real transient `HTTP 503` on the chat probe during testing | Detected by the probe, which led to the consecutive-failure threshold   |
+
+### 🔮 Next Improvement
+
+Log every status change to a Google Sheet for uptime history, add a periodic reminder while a dependency is still down, and expose a simple status summary through a Telegram command.
+
+### 📷 Workflow & Output
+
+<p align="center">
+  <img src="./screenshots/day-10-health-check-workflow.png" alt="Health Check Workflow" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./screenshots/day-10-sub-workflow.png" alt="Sub Send Alert Workflow" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./screenshots/day-10-telegram-alerts.png" alt="Failure and Recovery Alerts in Telegram" width="100%" />
+</p>
+
+---

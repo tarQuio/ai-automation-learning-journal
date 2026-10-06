@@ -1,0 +1,478 @@
+{
+  "name": "Health Check",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -544,
+        64
+      ],
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googlePalmApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"content\":{\"parts\":[{\"text\":\"ping\"}]}}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -320,
+        -224
+      ],
+      "name": "Gemini Embedding"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googlePalmApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"contents\":[{\"parts\":[{\"text\":\"ping\"}]}],\"generationConfig\":{\"maxOutputTokens\":5}}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -320,
+        -32
+      ],
+      "name": "Gemini Chat"
+    },
+    {
+      "parameters": {
+        "url": "https://api.groq.com/openai/v1/models",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "groqApi",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -320,
+        160
+      ],
+      "name": "Groq"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "documents",
+        "limit": 1
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        352
+      ],
+      "name": "Get many rows",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0fde43bc-6830-4ede-85aa-4a4126864204",
+              "name": "probe",
+              "value": "Gemini Embedding",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "statusCode, error",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -96,
+        -224
+      ],
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f9f2896e-9796-4512-95d7-a1fff8965847",
+              "name": "probe",
+              "value": "Gemini Chat",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "statusCode, error",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -96,
+        -32
+      ],
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5ac3ce00-915e-48bc-a3dc-600660834083",
+              "name": "probe",
+              "value": "Groq",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "statusCode, error",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -96,
+        160
+      ],
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "83156cc9-ce35-4c9e-b64e-f8f090e357d0",
+              "name": "probe",
+              "value": "Supabase",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "statusCode, error",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -96,
+        352
+      ],
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        128,
+        32
+      ],
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// Day 10 - Code node: \"Evaluate & Detect Changes\"\n// Letakkan SETELAH node Merge (4 probe digabung).\n// Mode: Run Once for All Items, bahasa JavaScript.\n//\n// Tiap item masuk harus punya field `probe` (diisi node Edit Fields\n// setelah tiap probe) dan hasil mentah probe: `statusCode` (HTTP Request\n// dengan opsi Never Error) atau `error` (node yang gagal dan Continue).\n//\n// Catatan penting: $getWorkflowStaticData hanya menyimpan nilai pada\n// eksekusi PRODUCTION (workflow Active, dipicu Schedule Trigger).\n// Saat tombol Execute di editor, state tidak tersimpan.\n// ============================================================\n\nconst state = $getWorkflowStaticData('global');\nconst sebelumnya = state.status || {};\nconst sekarang = {};\nconst alarm = [];\nconst ringkasan = [];\n\nfor (const item of $input.all()) {\n  const j = item.json;\n  const nama = j.probe || 'unknown';\n  const kode = j.statusCode ?? j.error?.code ?? null;\n\n  // Gagal jika ada field error, atau kode HTTP >= 400\n  const gagal = Boolean(j.error) || (kode !== null && kode >= 400);\n  const status = gagal ? 'FAIL' : 'OK';\n  sekarang[nama] = status;\n\n  // Anggap kondisi awal OK, jadi kegagalan pada run pertama tetap diberi tahu\n  const lalu = sebelumnya[nama] || 'OK';\n  const label = kode !== null ? `HTTP ${kode}` : 'error';\n\n  ringkasan.push(`${nama}: ${status}`);\n\n  if (lalu === 'OK' && status === 'FAIL') {\n    alarm.push(`🔴 ${nama} GAGAL (${label})`);\n  } else if (lalu === 'FAIL' && status === 'OK') {\n    alarm.push(`🟢 ${nama} pulih`);\n  }\n  // Status tidak berubah: tidak ada alarm (mencegah spam tiap 30 menit)\n}\n\n// Simpan status terbaru untuk run berikutnya\nstate.status = sekarang;\n\nreturn [{\n  json: {\n    ada_alarm: alarm.length > 0,\n    judul: '🩺 Health Check Bot Q dan A',\n    pesan: alarm.join('\\n'),\n    ringkasan: ringkasan.join(' | '),\n  },\n}];\n\n// ============================================================\n// Pemetaan field untuk node \"Execute Workflow\" (memanggil Sub: Send Alert)\n//   judul : {{ $json.judul }}\n//   pesan : {{ $json.pesan }}\n//\n// Pemetaan di Global Error Handler (menggantikan node Telegram lama):\n//   judul : ⚠️ Bot Q dan A gagal\n//   pesan : Workflow: {{ $('Code in JavaScript').item.json.workflow }}\n//           Node: {{ $('Code in JavaScript').item.json.node }}\n//           Waktu: {{ $('Code in JavaScript').item.json.waktu }}\n//           Link: {{ $('Code in JavaScript').item.json.url }}\n// ============================================================"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        352,
+        64
+      ],
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "72ed4974-257c-4b8a-bb8a-c8783cf4642d",
+              "leftValue": "={{ $json.ada_alarm }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        576,
+        64
+      ],
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "YOUR_SUBWORKFLOW_ID",
+          "mode": "list",
+          "cachedResultName": "Sub-workflow \"Sub: Send Alert\""
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "judul": "={{ $json.judul }}",
+            "pesan": "={{ $json.pesan }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "judul",
+              "displayName": "judul",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "pesan",
+              "displayName": "pesan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        816,
+        48
+      ],
+      "name": "Call 'Sub-workflow \"Sub: Send Alert\"'"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Gemini Embedding",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gemini Chat",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Groq",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get many rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Embedding": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Chat": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many rows": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Call 'Sub-workflow \"Sub: Send Alert\"'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "nodeGroups": [],
+  "tags": []
+}
